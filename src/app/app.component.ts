@@ -1,12 +1,136 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {NgForOf, NgIf} from '@angular/common';
+import {ProductType} from './types/product.type';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {HttpClient, HttpClientModule} from '@angular/common/http';
+//import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+
   templateUrl: './app.component.html',
+  imports: [
+    NgForOf,
+    FormsModule,
+    ReactiveFormsModule,
+    NgIf,
+    HttpClientModule
+
+  ],
   styleUrl: './app.component.less'
 })
 export class AppComponent {
-  title = 'task20macaroon';
+  public title = 'task20macaroon';
+  public isDark:boolean = false;
+ public orderForm: FormGroup;
+ public successMessage: string | null = null;
+
+  showOrderForm = true;
+ public loading = false;
+  public products: ProductType[] = [
+    {
+      image: 'macaroon1.png',
+      productTitle: 'Макарун с малиной',
+      quantity: '1 шт',
+      price: '1.70 руб.',
+    },
+    {
+      image: 'macaroon2.png',
+      productTitle: 'Макарун с манго',
+      quantity: '1 шт',
+      price: '1.70 руб.',
+    },
+    {
+      image: 'macaroon3.png',
+      productTitle: 'Пирог с ванилью',
+      quantity: '1 шт',
+      price: '1.70 руб.',
+    },
+    {
+      image: 'macaroon4.png',
+      productTitle: 'Пирог с фисташками',
+      quantity: '1 шт',
+      price: '1.70 руб.',
+    }
+    ];
+  public FormModel = {
+    productTitle: '',
+    name: '',
+    phone: ''
+  }
+
+  // new WOW({
+  //           animateClass: 'animate__animated',
+  //         }).init();
+
+  constructor(private fb: FormBuilder, private http: HttpClient) {
+    this.orderForm = this.fb.group({
+      product: ['', Validators.required],
+      name: ['', Validators.required],
+      phone: ['', Validators.required]
+    });
+  }
+  public darkThemeActivation(){
+    const bodyElement:HTMLElement | null = document.getElementById('app-body');
+    if (bodyElement) {
+      if(this.isDark) {
+        bodyElement.classList.remove('dark-theme');
+        this.isDark = false;
+      }else{
+        bodyElement.classList.add('dark-theme')
+        this.isDark = true;
+      }
+    }
+  }
+  public scrollInTo(target: HTMLElement): void{
+    target.scrollIntoView({behavior: 'smooth'});
+  }
+
+  public addToCart (product: ProductType, target: HTMLElement): void{
+   this.scrollInTo(target);
+    this.FormModel.productTitle = product.productTitle;
+  }
+
+  public burgerBehavior(target: HTMLElement): void{
+    if(target)
+    target.classList.add('open')
+  }
+
+  public  closeMenu(target: HTMLElement): void{
+    target.classList.remove('open');
+  }
+
+  onSubmit() {
+    if (this.orderForm.valid) {
+      this.loading = true;
+
+      const formData = this.orderForm.value;
+
+      this.http.post('https://testologia.ru/checkout', formData).subscribe(
+        (response: any) => {
+          if (response.success === 1) {
+            this.successInfo('Спасибо за Ваш заказ. Мы скоро свяжемся с Вами!');
+          } else {
+            this.successInfo('Возникла ошибка при оформлении заказа, позвоните нам и сделайте заказ');
+          }
+          this.loading = false;
+          this.orderForm.reset();
+        },
+        (error) => {
+          console.error('Произошла ошибка:', error);
+          this.successInfo('Произошла ошибка при отправке данных.');
+          this.loading = false;
+        }
+      );
+    }
+
+  }
+ public successInfo(message: string): void {
+    this.showOrderForm = false; // Скрыть форму
+    this.successMessage = message; // Установить сообщение об успехе
+    this.orderForm.reset(); // Сбросить форму
+  }
+
+
 }
