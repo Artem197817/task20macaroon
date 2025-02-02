@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component} from '@angular/core';
 import {NgForOf, NgIf} from '@angular/common';
 import {ProductType} from './types/product.type';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
-//import { RouterOutlet } from '@angular/router';
+
 
 @Component({
   selector: 'app-root',
@@ -60,9 +60,6 @@ export class AppComponent {
     phone: ''
   }
 
-  // new WOW({
-  //           animateClass: 'animate__animated',
-  //         }).init();
 
   constructor(private fb: FormBuilder, private http: HttpClient) {
     this.orderForm = this.fb.group({
@@ -71,6 +68,7 @@ export class AppComponent {
       phone: ['', Validators.required]
     });
   }
+
   public darkThemeActivation(){
     const bodyElement:HTMLElement | null = document.getElementById('app-body');
     if (bodyElement) {
@@ -87,9 +85,11 @@ export class AppComponent {
     target.scrollIntoView({behavior: 'smooth'});
   }
 
-  public addToCart (product: ProductType, target: HTMLElement): void{
-   this.scrollInTo(target);
-    this.FormModel.productTitle = product.productTitle;
+  public addToCart (product: ProductType, target: HTMLElement): void {
+    this.scrollInTo(target);
+    this.orderForm.patchValue({
+      product: product.productTitle
+    });
   }
 
   public burgerBehavior(target: HTMLElement): void{
@@ -109,6 +109,7 @@ export class AppComponent {
 
       this.http.post('https://testologia.ru/checkout', formData).subscribe(
         (response: any) => {
+          console.log(response);
           if (response.success === 1) {
             this.successInfo('Спасибо за Ваш заказ. Мы скоро свяжемся с Вами!');
           } else {
@@ -127,9 +128,9 @@ export class AppComponent {
 
   }
  public successInfo(message: string): void {
-    this.showOrderForm = false; // Скрыть форму
-    this.successMessage = message; // Установить сообщение об успехе
-    this.orderForm.reset(); // Сбросить форму
+    this.showOrderForm = false;
+    this.successMessage = message;
+    this.orderForm.reset();
   }
 
 
