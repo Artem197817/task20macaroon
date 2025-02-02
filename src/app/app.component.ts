@@ -1,8 +1,9 @@
-import { Component} from '@angular/core';
+import {Component} from '@angular/core';
 import {NgForOf, NgIf} from '@angular/common';
 import {ProductType} from './types/product.type';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
+import {AdvantageType} from './types/advantage.type';
 
 
 @Component({
@@ -22,12 +23,14 @@ import {HttpClient, HttpClientModule} from '@angular/common/http';
 })
 export class AppComponent {
   public title = 'task20macaroon';
-  public isDark:boolean = false;
- public orderForm: FormGroup;
- public successMessage: string | null = null;
-
-  showOrderForm = true;
- public loading = false;
+  public isDark: boolean = false;
+  public orderForm: FormGroup;
+  public successMessage: string | null = null;
+  public showPresent: boolean = false;
+  public phoneNumber: string = '+375 (29) 368-98-68';
+  public instagramLink: string = 'https://www.instagram.com';
+  public showOrderForm: boolean = true;
+  public loading: boolean = false;
   public products: ProductType[] = [
     {
       image: 'macaroon1.png',
@@ -53,7 +56,26 @@ export class AppComponent {
       quantity: '1 шт',
       price: '1.70 руб.',
     }
-    ];
+  ];
+  public advantages: AdvantageType[] = [
+    {
+      advantageTitle: 'Лучшие продукты',
+      advantageDescription: 'Мы честно готовим макаруны только из натуральных и качественных продуктов. Мы не используем консерванты, ароматизаторы и красители.',
+    },
+    {
+      advantageTitle: 'Много вкусов',
+      advantageDescription: 'аша задача – предоставить вам широкое разнобразие вкусов. Вы удивитесь, но у нас более 70 вкусов пироженок.',
+    },
+    {
+      advantageTitle: 'Бисквитное тесто',
+      advantageDescription: 'Все пирожные готовятся на бисквитном тесте с качественным сливочным маслом 82,5%. В составе нет маргарина и дрожжей!',
+    },
+    {
+      advantageTitle: 'Честный продукт',
+      advantageDescription: 'Вкус, качество и безопасность наших пирогов подтверждена декларацией о соответствии, которую мы получили 22.06.2016 г.',
+    },
+  ];
+
   public FormModel = {
     productTitle: '',
     name: '',
@@ -69,42 +91,43 @@ export class AppComponent {
     });
   }
 
-  public darkThemeActivation(){
-    const bodyElement:HTMLElement | null = document.getElementById('app-body');
+  public darkThemeActivation() {
+    const bodyElement: HTMLElement | null = document.getElementById('app-body');
     if (bodyElement) {
-      if(this.isDark) {
+      if (this.isDark) {
         bodyElement.classList.remove('dark-theme');
         this.isDark = false;
-      }else{
+      } else {
         bodyElement.classList.add('dark-theme')
         this.isDark = true;
       }
     }
   }
-  public scrollInTo(target: HTMLElement): void{
+
+  public scrollInTo(target: HTMLElement): void {
     target.scrollIntoView({behavior: 'smooth'});
   }
 
-  public addToCart (product: ProductType, target: HTMLElement): void {
+  public addToCart(product: ProductType, target: HTMLElement): void {
     this.scrollInTo(target);
     this.orderForm.patchValue({
-      product: product.productTitle
+      product: product.productTitle.toUpperCase()
     });
+    this.showPresent = true;
   }
 
-  public burgerBehavior(target: HTMLElement): void{
-    if(target)
-    target.classList.add('open')
+  public burgerBehavior(target: HTMLElement): void {
+    if (target)
+      target.classList.add('open')
   }
 
-  public  closeMenu(target: HTMLElement): void{
+  public closeMenu(target: HTMLElement): void {
     target.classList.remove('open');
   }
 
   onSubmit() {
     if (this.orderForm.valid) {
       this.loading = true;
-
       const formData = this.orderForm.value;
 
       this.http.post('https://testologia.ru/checkout', formData).subscribe(
@@ -127,7 +150,8 @@ export class AppComponent {
     }
 
   }
- public successInfo(message: string): void {
+
+  public successInfo(message: string): void {
     this.showOrderForm = false;
     this.successMessage = message;
     this.orderForm.reset();

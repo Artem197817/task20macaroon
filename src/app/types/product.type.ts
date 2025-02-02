@@ -1,4 +1,3 @@
-import {resolveSrv} from 'node:dns';
 
 export interface ProductType {
   image: string,

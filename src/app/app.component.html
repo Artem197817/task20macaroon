@@ -27,15 +27,15 @@
         </div>
         <ul>
           <li class="menu-item item1 wow animate__fadeInDown">
-            <a href="#" class="menu-item-link">Пироженки</a></li>
-          <li class="menu-item item wow animate__fadeInDown"><a href="#" class="menu-item-link ">О нас</a></li>
-          <li class="menu-item item wow animate__fadeInDown"><a href="#" class="menu-item-link ">Оформить заказ</a></li>
+            <a href="#" class="menu-item-link" (click)="scrollInTo(selectElement); $event.preventDefault()">Пироженки</a></li>
+          <li class="menu-item item wow animate__fadeInDown"><a href="#" class="menu-item-link " (click)="scrollInTo(about); $event.preventDefault()">О нас</a></li>
+          <li class="menu-item item wow animate__fadeInDown"><a href="#" class="menu-item-link " (click)="scrollInTo(order); $event.preventDefault()">Оформить заказ</a></li>
         </ul>
       </nav>
       <div class="burger" id="burger">
         <img src="assets/images/burger.png" alt="burger" (click)="burgerBehavior(menu)">
       </div>
-      <div class="phone" id="phone">+375 (29) 368-98-68</div>
+      <div class="phone" id="phone">{{phoneNumber}}</div>
     </div>
   </header>
   <section class="title">
@@ -61,7 +61,7 @@
       </div>
     </div>
   </section>
-  <section class="advantages">
+  <section class="advantages" #about>
     <div class="container">
 
       <div class="advantages-title">
@@ -78,43 +78,12 @@
         <img src="assets/images/macaroon-big.png" alt="макарун" class="advantages-image-img">
       </div>
       <div class="advantages-info">
-        <div class="advantage">
+        <div class="advantage" *ngFor="let advantage of advantages; let i = index;">
           <div class="advantage-image">
-            <div class="advantage-icon wow animate__zoomIn">1</div>
+            <div class="advantage-icon wow animate__zoomIn">{{i+1}}</div>
           </div>
-          <h3 class="advantage-title">Лучшие продукты</h3>
-          <div class="advantage-text">Мы честно готовим макаруны только из натуральных и качественных продуктов.
-            Мы не используем консерванты, ароматизаторы и красители.
-          </div>
-        </div>
-        <div class="advantage">
-          <div class="advantage-image">
-            <div class="advantage-icon wow animate__zoomIn">2</div>
-          </div>
-          <h3 class="advantage-title">Много вкусов</h3>
-          <div class="advantage-text">Наша задача – предоставить вам широкое разнобразие вкусов.
-            Вы удивитесь, но у нас более 70 вкусов пироженок.
-          </div>
-        </div>
-        <div class="advantage">
-          <div class="advantage-image">
-            <div class="advantage-icon wow animate__zoomIn">3</div>
-          </div>
-
-          <h3 class="advantage-title">Бисквитное тесто</h3>
-          <div class="advantage-text">Все пирожные готовятся на бисквитном тесте с качественным сливочным маслом
-            82,5%.
-            В составе нет маргарина и дрожжей!
-          </div>
-        </div>
-        <div class="advantage">
-          <div class="advantage-image">
-            <div class="advantage-icon wow animate__zoomIn">4</div>
-          </div>
-          <h3 class="advantage-title">Честный продукт</h3>
-          <div class="advantage-text">Вкус, качество и безопасность наших пирогов подтверждена декларацией о
-            соответствии,
-            которую мы получили 22.06.2016 г.
+          <h3 class="advantage-title">{{advantage.advantageTitle}}</h3>
+          <div class="advantage-text">{{advantage.advantageDescription}}
           </div>
         </div>
       </div>
@@ -202,15 +171,15 @@
           <img src="assets/images/logo.png" alt="logo" class="logo-img">
           <div class="rights">Все права защищены, 2020</div>
         </div>
-        <a href="#" class="footer-instagram">
+        <a [href]="instagramLink" class="footer-instagram">
           <img src="assets/images/instagram.png" alt="instagram" class="footer-instagram-image">
           <div class="footer-instagram-text">Мы в Instagram</div>
         </a>
-        <div class="phone">+375 (29) 368-98-68</div>
+        <div class="phone">{{ phoneNumber }}</div>
       </div>
     </footer>
   </div>
-  <div class="present">
+  <div class="present" *ngIf="showPresent">
     <a href="#" class="present-link">
       <div class="present-container">
         <img src="assets/images/present.png" alt="present" class="present-image">
@@ -225,7 +194,7 @@
 
   </div>
 </div>
-<div class="loader-container">
+<div class="loader-container" *ngIf="loading">
   <span class="loader"></span>
 </div>
 
